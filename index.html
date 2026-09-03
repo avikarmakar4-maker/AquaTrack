@@ -1,0 +1,2632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Water Distribution App</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
+    header { background:#0077cc; color:white; padding:15px; text-align:center; }
+    nav { background:#eee; padding:10px; text-align:center; }
+    section { padding:20px; }
+    .card { background:white; border:1px solid #ddd; padding:15px; margin:10px auto; width:80%; border-radius:5px; }
+    .btn { background:#0077cc; color:white; padding:10px 15px; border:none; cursor:pointer; margin:5px; }
+    .btn:hover { background:#005fa3; }
+    .hidden { display:none; }
+    input, select { padding:8px; margin:5px; width:90%; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+  </style>
+  <script>
+    function showSection(id) {
+      document.querySelectorAll("section").forEach(sec => sec.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+    }
+    function login(role) {
+      if(role === 'rep') showSection('repDashboard');
+      else showSection('adminDashboard');
+    }
+    function addProductRow() {
+      const table = document.getElementById("catalogueTable");
+      const row = table.insertRow();
+      row.innerHTML = `
+        <td><input type="text" placeholder="Product Name"></td>
+        <td><input type="text" placeholder="Size"></td>
+        <td><input type="text" placeholder="Brand"></td>
+        <td><input type="number" placeholder="Price"></td>
+      `;
+    }
+    function addCustomerRow() {
+      const table = document.getElementById("customerTable");
+      const row = table.insertRow();
+      row.innerHTML = `
+        <td><input type="text" placeholder="Customer Name"></td>
+        <td><input type="text" placeholder="Address"></td>
+        <td><input type="text" placeholder="Contact"></td>
+        <td><input type="number" placeholder="First Order Crates"></td>
+      `;
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Water Distribution & Promotion App</h1>
+  </header>
+
+  <nav>
+    <button class="btn" onclick="showSection('login')">Login</button>
+    <button class="btn" onclick="showSection('signup')">Sign Up</button>
+  </nav>
+
+  <!-- Login Section -->
+  <section id="login" class="card">
+    <h2>Login</h2>
+    <input type="text" placeholder="Username">
+    <input type="password" placeholder="Password">
+    <button class="btn" onclick="login('rep')">Login as Representative</button>
+    <button class="btn" onclick="login('admin')">Login as Admin</button>
+  </section>
+
+  <!-- Sign Up Section -->
+  <section id="signup" class="card hidden">
+    <h2>Sign Up</h2>
+    <input type="text" placeholder="Full Name">
+    <input type="email" placeholder="Email">
+    <input type="password" placeholder="Password">
+    <select>
+      <option value="rep">Representative</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button class="btn">Create Account</button>
+  </section>
+
+  <!-- Representative Dashboard -->
+  <section id="repDashboard" class="hidden">
+    <h2>Representative Dashboard</h2>
+    <div class="card">
+      <h3>Sales Overview</h3>
+      <p>Targets vs Achieved Crates</p>
+    </div>
+    <div class="card">
+      <h3>Customer Selection</h3>
+      <select>
+        <option>Existing Customer A</option>
+        <option>Existing Customer B</option>
+        <option>Add New Customer</option>
+      </select>
+      <p>📸 Photo Capture Facility</p>
+    </div>
+    <div class="card">
+      <h3>Product Catalogue</h3>
+      <select>
+        <option>Aquinne 300 Ml</option>
+        <option>Aquinne 500 Ml</option>
+        <option>Aquinne 1 Ltr</option>
+        <option>Aquinne 2 Ltrs</option>
+        <option>Aqua Diamond 500 Ml</option>
+        <option>Aqua Diamond 1 Ltr</option>
+        <option>Aqua Diamond 2 Ltrs</option>
+        <option>Aqua Diamond 5 Ltrs</option>
+        <option>Aqua Diamond 20 Ltrs</option>
+        <option>Amrut 20 Ltrs</option>
+      </select>
+    </div>
+    <div class="card">
+      <h3>Order Placement</h3>
+      <input type="number" placeholder="Crates Ordered">
+      <p>Incentive: ₹25 if new customer orders ≥ 5 crates</p>
+      <button class="btn">Submit Order</button>
+    </div>
+    <div class="card">
+      <h3>Performance Tracker</h3>
+      <p>Weekly/Monthly Graphs & Milestones</p>
+    </div>
+    <div class="card">
+      <h3>Notifications</h3>
+      <p>Alerts for targets, approvals, incentive releases</p>
+    </div>
+  </section>
+
+  <!-- Admin Dashboard -->
+  <section id="adminDashboard" class="hidden">
+    <h2>Admin Dashboard</h2>
+    <div class="card">
+      <h3>Global Sales Overview</h3>
+      <p>Consolidated crates sold, revenue, profit</p>
+    </div>
+    <div class="card">
+      <h3>Rep Management</h3>
+      <p>Add/Remove reps, assign targets, monitor performance</p>
+    </div>
+    <div class="card">
+      <h3>Editable Product Catalogue</h3>
+      <table id="catalogueTable">
+        <tr><th>Product Name</th><th>Size</th><th>Brand</th><th>Price per Crate</th></tr>
+        <tr><td>Aquinne 300 Ml</td><td>300 Ml</td><td>Aquinne</td><td>120</td></tr>
+        <tr><td>Aquinne 500 Ml</td><td>500 Ml</td><td>Aquinne</td><td>150</td></tr>
+        <tr><td>Aquinne 1 Ltr</td><td>1 Ltr</td><td>Aquinne</td><td>200</td></tr>
+        <tr><td>Aquinne 2 Ltrs</td><td>2 Ltrs</td><td>Aquinne</td><td>250</td></tr>
+        <tr><td>Aqua Diamond 500 Ml</td><td>500 Ml</td><td>Aqua Diamond</td><td>160</td></tr>
+        <tr><td>Aqua Diamond 1 Ltr</td><td>1 Ltr</td><td>Aqua Diamond</td><td>210</td></tr>
+        <tr><td>Aqua Diamond 2 Ltrs</td><td>2 Ltrs</td><td>Aqua Diamond</td><td>260</td></tr>
+        <tr><td>Aqua Diamond 5 Ltrs</td><td>5 Ltrs</td><td>Aqua Diamond</td><td>400</td></tr>
+        <tr><td>Aqua Diamond 20 Ltrs</td><td>20 Ltrs</td><td>Aqua Diamond</td><td>800</td></tr>
+        <tr><td>Amrut 20 Ltrs</td><td>20 Ltrs</td><td>Amrut</td><td>750</td></tr>
+      </table>
+      <button class="btn" onclick="addProductRow()">Add Product</button>
+    </div>
+    <div class="card">
+      <h3>Customer Management</h3>
+      <table id="customerTable">
+        <tr><th>Name</th><th>Address</th><th>Contact</th><th>First Order Crates</th></tr>
+        <tr><td>Store A</td><td>Kolkata</td><td>9876543210</td><td>5</td></tr>
+        <tr><td>Store B</td><td>Rajarhat</td><td>9123456780</td><td>3</td></tr>
+      </table>
+      <button class="btn" onclick="addCustomerRow()">Add Customer</button>
+    </div>
+    <bottom: 6px;
+            color: var(--text);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text);
+            background: #fff;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        .demo-roles {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .demo-roles p {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .demo-chips {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .demo-chip {
+            flex: 1;
+            min-width: 120px;
+            padding: 7px 8px;
+            font-size: 11px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface-hover);
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-dark);
+            transition: 0.15s;
+        }
+
+        .demo-chip:hover {
+            background: var(--primary-light);
+            border-color: var(--secondary);
+        }
+
+        .demo-chip.sales-chip {
+            color: var(--sales-accent);
+        }
+        .demo-chip.sales-chip:hover {
+            background: var(--sales-light);
+            border-color: var(--sales-accent);
+        }
+
+        .portal-layout {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #0f172a;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .navbar.sales-nav {
+            background: #1e1b4b;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-badge-icon {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #0284c7, #14b8a6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .brand-badge-icon.sales-icon {
+            background: linear-gradient(135deg, #7c3aed, #ec4899);
+        }
+
+        .nav-brand-title {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-brand-sub {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .distributor-pill {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        .cart-trigger-btn {
+            position: relative;
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .cart-trigger-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .cart-count {
+            background: #ef4444;
+            color: white;
+            border-radius: 10px;
+            padding: 1px 7px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* Sub-Navigation Tabs */
+        .subnav {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            display: flex;
+            gap: 24px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .subnav::-webkit-scrollbar { display: none; }
+
+        .subnav-tab {
+            padding: 14px 4px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .subnav-tab:hover {
+            color: var(--primary);
+        }
+
+        .subnav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .subnav-tab.sales-active {
+            color: var(--sales-accent);
+            border-bottom-color: var(--sales-accent);
+        }
+
+        /* Main Content Container */
+        .portal-body {
+            flex: 1;
+            padding: 24px;
+            background: var(--background);
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .stat-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .stat-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .panel-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Products Catalog Matrix */
+        .catalog-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .filter-btn.sales-active {
+            background: var(--sales-accent) !important;
+            border-color: var(--sales-accent) !important;
+            color: white !important;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .product-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: #cbd5e1;
+        }
+
+        .product-badge-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .brand-tag {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .brand-tag.aqua-diamond {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .brand-tag.aquinne {
+            background: #f0fdf4;
+            color: #15803d;
+        }
+
+        .product-visual {
+            height: 110px;
+            background: #f8fafc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bottle-icon {
+            font-size: 42px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .product-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .product-meta {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            margin-top: auto;
+        }
+
+        .wholesale-price {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary-dark);
+        }
+
+        .unit-pack {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
+
+        .qty-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .qty-input {
+            width: 50px;
+            height: 32px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .order-table th {
+            background: #f8fafc;
+            padding: 12px 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .order-table td {
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            vertical-align: middle;
+        }
+
+        .order-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* Salesman Route / Beat Store Item */
+        .beat-store-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .beat-store-card:hover {
+            border-color: var(--sales-accent);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .store-info h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .store-meta {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            border-radius: 9999px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-bar-fill {
+            background: var(--sales-accent);
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+        }
+
+        /* Cart Drawer / Modal */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 100;
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .cart-modal.open {
+            display: flex;
+        }
+
+        .cart-drawer {
+            width: 100%;
+            max-width: 480px;
+            height: 100%;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            animation: slideInRight 0.25s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .cart-drawer-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .cart-item-info {
+            flex: 1;
+            padding-right: 12px;
+        }
+
+        .cart-item-title {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .cart-item-meta {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .cart-drawer-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .summary-row.total {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+        }
+
+        /* Order Details / Tracking Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 100;
+            backdrop-filter: blur(2px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--surface);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        /* Stepper Tracking */
+        .track-stepper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 24px 0;
+        }
+
+        .track-stepper::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .track-step {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .track-step.done .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .track-step.active .step-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2);
+        }
+
+        .step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: #1e293b;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease-out forwards;
+            border-left: 4px solid var(--primary);
+        }
+
+        .toast.sales-toast {
+            border-left-color: var(--sales-accent);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Empties & Cylinders Section */
+        .cylinder-card {
+            background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cylinder-stats {
+            display: flex;
+            gap: 30px;
+        }
+
+        .cylinder-stat-item h3 {
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .cylinder-stat-item p {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        /* Responsive Tweaks */
+        @media (max-width: 640px) {
+            .portal-body { padding: 16px; }
+            .navbar { padding: 12px 16px; }
+            .distributor-pill { display: none; }
+            .cylinder-card { flex-direction: column; gap: 16px; align-items: flex-start; }
+            .cylinder-stats { gap: 16px; }
+            .beat-store-card { flex-direction: column; align-items: flex-start; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- 1. AUTHENTICATION / LOGIN VIEW -->
+        <div id="authScreen" class="auth-wrapper">
+            <div class="auth-card">
+                <div class="brand-icon-large">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                </div>
+                <div class="brand-header">
+                    <h1>Aqua Diamond & Aquinne</h1>
+                    <p>Direct B2B Wholesale & Field Sales System (India)</p>
+                </div>
+
+                <!-- Role Selector Tabs -->
+                <div class="role-switch-container">
+                    <button type="button" class="role-tab-btn active" id="btnRoleDistributor" onclick="selectLoginRole('DISTRIBUTOR')">
+                        🏢 Distributor Portal
+                    </button>
+                    <button type="button" class="role-tab-btn" id="btnRoleSalesman" onclick="selectLoginRole('SALESMAN')">
+                        🛵 Salesman / DSR
+                    </button>
+                </div>
+
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label id="lblUsername" for="distributorId">Distributor GSTIN / Account ID</label>
+                        <input type="text" id="distributorId" class="form-control" placeholder="e.g. 27AAACD1234F1Z5" required value="AD-METRO-MUM">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Security PIN / Password</label>
+                        <input type="password" id="password" class="form-control" placeholder="••••••••" required value="distributor123">
+                    </div>
+
+                    <button type="submit" id="submitAuthBtn" class="btn" style="width: 100%; margin-top: 10px;">
+                        Sign In to Wholesale Portal
+                    </button>
+                </form>
+
+                <div class="demo-roles">
+                    <p>Instant Demo Switcher (INR ₹)</p>
+                    <div class="demo-chips">
+                        <div class="demo-chip" onclick="quickFill('AD-METRO-MUM', 'Metro Beverages (Platinum)', 'DISTRIBUTOR')">🏢 Mumbai Platinum</div>
+                        <div class="demo-chip" onclick="quickFill('AQ-BLR-880', 'Karnataka Springs (Gold)', 'DISTRIBUTOR')">🏢 Bengaluru Gold</div>
+                        <div class="demo-chip sales-chip" onclick="quickFill('DSR-RAJ-01', 'Rajesh Sharma (Area Sales Rep)', 'SALESMAN')">🛵 DSR Rajesh (Mumbai)</div>
+                        <div class="demo-chip sales-chip" onclick="quickFill('DSR-VIK-09', 'Vikram Singh (HORECA Rep)', 'SALESMAN')">🛵 DSR Vikram (Delhi)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="portalDashboard" class="portal-layout">
+            
+            <!-- Header Navbar -->
+            <header class="navbar" id="mainNavbar">
+                <div class="nav-left">
+                    <div class="nav-brand-group">
+                        <div class="brand-badge-icon" id="brandIcon">💎</div>
+                        <div>
+                            <div class="nav-brand-title" id="portalHeaderTitle">Aqua Diamond & Aquinne</div>
+                            <div class="nav-brand-sub" id="portalHeaderSub">Authorized B2B Wholesale Hub</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-right">
+                    <div class="distributor-pill">
+                        <span class="status-dot"></span>
+                        <span id="navDistributorName">Metro Beverages Mumbai</span>
+                        <span class="badge badge-info" id="navTierBadge">Platinum (₹)</span>
+                    </div>
+
+                    <!-- Cart Trigger Button (Distributor & Salesman Order) -->
+                    <button class="cart-trigger-btn" id="cartNavBtn" onclick="toggleCartModal(true)">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        <span id="cartBtnLabel">PO Cart</span>
+                        <span class="cart-count" id="navCartCount">0</span>
+                    </button>
+
+                    <button class="btn btn-secondary btn-sm" onclick="handleLogout()">
+                        Exit
+                    </button>
+                </div>
+            </header>
+
+            <!-- DISTRIBUTOR SUB-NAVIGATION TABS -->
+            <div class="subnav" id="distributorSubnav">
+                <div class="subnav-tab active" onclick="switchDistributorTab('dashboard')">
+                    📊 Overview
+                </div>
+                <div class="subnav-tab" onclick="switchDistributorTab('catalog')">
+                    📦 Wholesale Matrix (INR ₹)
+                </div>
+                <div class="subnav-tab" onclick="switchDistributorTab('orders')">
+                    🚚 Purchase Orders & In Transit
+                </div>
+                <div class="subnav-tab" onclick="switchDistributorTab('cylinders')">
+                    🛢️ 20L Carboy Empties Return
+                </div>
+                <div class="subnav-tab" onclick="switchDistributorTab('invoices')">
+                    📑 GST Ledger & Tax Invoices
+                </div>
+            </div>
+
+            <!-- SALESMAN / FIELD REP SUB-NAVIGATION TABS -->
+            <div class="subnav" id="salesmanSubnav" style="display: none;">
+                <div class="subnav-tab active" onclick="switchSalesmanTab('beat')">
+                    🗺️ Today's Beat & Visits
+                </div>
+                <div class="subnav-tab" onclick="switchSalesmanTab('book-order')">
+                    📝 Field Order Booking
+                </div>
+                <div class="subnav-tab" onclick="switchSalesmanTab('targets')">
+                    🎯 Targets & DSR Performance
+                </div>
+                <div class="subnav-tab" onclick="switchSalesmanTab('onboard')">
+                    ➕ New Retailer KYC / Onboarding
+                </div>
+                <div class="subnav-tab" onclick="switchSalesmanTab('schemes')">
+                    🎁 Trade Schemes & Discounts
+                </div>
+            </div>
+
+            <main class="portal-body">
+
+                <!-- ================= DISTRIBUTOR SECTION ================= -->
+                
+                <!-- TAB 1: DISTRIBUTOR OVERVIEW -->
+                <div id="tab-dist-dashboard" class="tab-panel active">
+                    
+                    <!-- KPI Metrics (INR) -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-title">Available Credit Limit</span>
+                                <div class="stat-icon" style="background:#e0f2fe; color:#0369a1;">💳</div>
+                            </div>
+                            <div class="stat-value" id="kpiCredit">₹34,80,000</div>
+                            <div class="stat-sub">Total Limit: ₹50,00,000 (Terms: Net-30)</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-title">Active Freight Dispatches</span>
+                                <div class="stat-icon" style="background:#fef3c7; color:#b45309;">🚚</div>
+                            </div>
+                            <div class="stat-value" id="kpiEnRoute">2 Shipments</div>
+                            <div class="stat-sub">Next Delivery: Today by 4:00 PM</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-title">Monthly Volume (MTD)</span>
+                                <div class="stat-icon" style="background:#d1fae5; color:#047857;">📈</div>
+                            </div>
+                            <div class="stat-value">28,500 L</div>
+                            <div class="stat-sub">+22.5% vs. previous month</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-title">20L Carboys in Circulation</span>
+                                <div class="stat-icon" style="background:#f1f5f9; color:#475569;">🛢️</div>
+                            </div>
+                            <div class="stat-value" id="carboyCountKpi">420 Units</div>
+                            <div class="stat-sub" id="carboyDepositKpi">Deposit Balance: ₹63,000 (@ ₹150)</div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Main Grid -->
+                    <div class="dashboard-grid">
+                        <div>
+                            <!-- Urgent Dispatch Notices -->
+                            <div class="panel-card">
+                                <div class="panel-header">
+                                    <div class="panel-title">
+                                        <span>🚛 Live Truck Dispatches & Consignments</span>
+                                    </div>
+                                    <button class="btn btn-outline btn-sm" onclick="switchDistributorTab('orders')">View All</button>
+                                </div>
+                                <div class="table-container">
+                                    <table class="order-table">
+                                        <thead>
+                                            <tr>
+                                                <th>PO Number</th>
+                                                <th>Payload SKU</th>
+                                                <th>Pallets</th>
+                                                <th>Amount (₹)</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="liveOrdersTbody">
+                                            <!-- Injected via JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Fast Reorder Banner -->
+                            <div class="panel-card" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                                    <div>
+                                        <h3 style="font-size: 16px; font-weight:700; margin-bottom: 4px;">Monsoon Stock Allocation & Trade Incentive Active</h3>
+                                        <p style="font-size: 13px; color: #94a3b8;">Platinum distributors receive an extra ₹25 per case rebate on 15+ Pallet bookings of Aquinne Sparkling.</p>
+                                    </div>
+                                    <button class="btn btn-outline" style="border-color:#38bdf8; color:#38bdf8;" onclick="switchDistributorTab('catalog')">
+                                        Open Price Matrix
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Side Quick Action & Contacts -->
+                        <div>
+                            <div class="panel-card">
+                                <div class="panel-header">
+                                    <div class="panel-title">⚡ Quick Distributor Actions</div>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <button class="btn btn-secondary" style="justify-content: flex-start;" onclick="switchDistributorTab('catalog')">
+                                        📦 Create Primary Purchase Order (PO)
+                                    </button>
+                                    <button class="btn btn-secondary" style="justify-content: flex-start;" onclick="switchDistributorTab('cylinders')">
+                                        🛢️ Book 20L Empty Backhaul Return
+                                    </button>
+                                    <button class="btn btn-secondary" style="justify-content: flex-start;" onclick="downloadPriceList()">
+                                        📥 Download 2026 GST Price Matrix (PDF)
+                                    </button>
+                                    <button class="btn btn-secondary" style="justify-content: flex-start;" onclick="showToast('Regional Depot Manager: +91 98200 12345')">
+                                        📞 Contact Regional Depot Manager
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="panel-card">
+                                <div class="panel-header">
+                                    <div class="panel-title">💎 Water Purity Standard</div>
+                                </div>
+                                <p style="font-size: 12px; color: var(--text-light); line-height: 1.5; margin-bottom: 12px;">
+                                    Aqua Diamond 9.5+ pH Natural Ionized Alkaline Water with 8 essential Himalayan minerals. FSSAI & BIS Certified.
+                                </p>
+                                <span class="badge badge-success">High Demand SKU</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- TAB 2: DISTRIBUTOR CATALOG -->
+                <div id="tab-dist-catalog" class="tab-panel">
+                    <div class="catalog-controls">
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" onclick="filterCatalog('ALL', this)">All Products</button>
+                            <button class="filter-btn" onclick="filterCatalog('AQUA_DIAMOND', this)">Aqua Diamond (Alkaline)</button>
+                            <button class="filter-btn" onclick="filterCatalog('AQUINNE', this)">Aquinne (Natural Sparkling)</button>
+                            <button class="filter-btn" onclick="filterCatalog('BULK', this)">Bulk 20L Carboys</button>
+                        </div>
+                        <div style="font-size: 13px; color: var(--text-light);">
+                            Distributor Tier Applied: <strong style="color: var(--primary-dark);">Platinum Wholesale (-12% GST-inclusive)</strong>
+                        </div>
+                    </div>
+
+                    <div class="product-grid" id="productGridContainer">
+                        <!-- Product Cards Injected via JS -->
+                    </div>
+                </div>
+
+                <!-- TAB 3: DISTRIBUTOR ORDERS -->
+                <div id="tab-dist-orders" class="tab-panel">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-title">📜 Purchase Order Ledger & E-Way Bill Consignments</div>
+                            <button class="btn btn-primary btn-sm" onclick="switchDistributorTab('catalog')">+ New Purchase Order</button>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="order-table">
+                                <thead>
+                                    <tr>
+                                        <th>PO Number</th>
+                                        <th>Date & Time</th>
+                                        <th>SKU Breakdown</th>
+                                        <th>Cases</th>
+                                        <th>Net Amount (₹)</th>
+                                        <th>GST Invoice</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersFullTbody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: EMPTIES & CARBOY RECOVERY (INR) -->
+                <div id="tab-dist-cylinders" class="tab-panel">
+                    
+                    <div class="cylinder-card">
+                        <div>
+                            <h2 style="font-size: 20px; font-weight:800; margin-bottom: 6px;">20L Commercial Carboy Balance</h2>
+                            <p style="font-size: 13px; opacity: 0.9;">Track returnable cylinder deposit credits (₹150/unit) and book backhaul truck returns.</p>
+                        </div>
+                        <div class="cylinder-stats">
+                            <div class="cylinder-stat-item">
+                                <h3 id="carboyOutCount">420</h3>
+                                <p>Cylinders at Client Locations</p>
+                            </div>
+                            <div class="cylinder-stat-item">
+                                <h3 id="carboyCreditVal">₹63,000</h3>
+                                <p>Secured Deposit Balance</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div class="panel-title">🚛 Schedule Empty Carboy Backhaul Pickup</div>
+                            </div>
+                            <form onsubmit="handleCarboyReturn(event)">
+                                <div class="form-group">
+                                    <label>Quantity of Empty 20L Carboys Ready for Backhaul</label>
+                                    <input type="number" id="pickupQty" class="form-control" min="20" max="500" value="60" required>
+                                    <small style="color: var(--text-muted); font-size: 11px;">Minimum backhaul pickup is 20 units (1 pallet layer).</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>Preferred Dispatch Pickup Slot</label>
+                                    <select class="form-control" id="pickupSlot">
+                                        <option>Tomorrow Morning (09:00 - 13:00)</option>
+                                        <option>Tomorrow Afternoon (14:00 - 18:00)</option>
+                                        <option>Standard Route Pickup</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Warehouse Loading Dock / Address</label>
+                                    <input type="text" class="form-control" value="Dock 3, Metro Warehousing, Bhiwandi Road" required>
+                                </div>
+                                <button type="submit" class="btn">
+                                    Schedule Return & Request Deposit Credit (₹)
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div class="panel-title">📋 Recent Cylinder Return Receipts</div>
+                            </div>
+                            <div style="font-size: 13px; display: flex; flex-direction: column; gap: 12px;">
+                                <div style="padding: 10px; background: #f8fafc; border-radius: 6px; border-left: 3px solid var(--success);">
+                                    <div style="font-weight:700;">Rec #RET-9921 - 80 Units Credited</div>
+                                    <div style="font-size: 11px; color: var(--text-light);">Credited ₹12,000 to Ledger on May 28, 2026</div>
+                                </div>
+                                <div style="padding: 10px; background: #f8fafc; border-radius: 6px; border-left: 3px solid var(--success);">
+                                    <div style="font-weight:700;">Rec #RET-8410 - 120 Units Credited</div>
+                                    <div style="font-size: 11px; color: var(--text-light);">Credited ₹18,000 to Ledger on May 12, 2026</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: FINANCIAL LEDGER & GST INVOICES (INR) -->
+                <div id="tab-dist-invoices" class="tab-panel">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-title">💳 GST Wholesale Statement & Settlement Account</div>
+                            <button class="btn btn-outline btn-sm" onclick="showToast('Statement exported for Tally/SAP accounting!')">📥 Export CSV / Tally XML</button>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="order-table">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Date</th>
+                                        <th>Due Date</th>
+                                        <th>Gross Total</th>
+                                        <th>Deposit Credits</th>
+                                        <th>Net Due (INR ₹)</th>
+                                        <th>Status</th>
+                                        <th>Invoice PDF</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>INV-2026-0811</strong></td>
+                                        <td>May 29, 2026</td>
+                                        <td>June 29, 2026</td>
+                                        <td>₹3,42,000</td>
+                                        <td>-₹12,000</td>
+                                        <td><strong>₹3,30,000</strong></td>
+                                        <td><span class="badge badge-warning">Unpaid (Net 30)</span></td>
+                                        <td><button class="btn btn-secondary btn-sm" onclick="showInvoiceModal('INV-2026-0811', '₹3,30,000')">View GST PDF</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>INV-2026-0743</strong></td>
+                                        <td>May 10, 2026</td>
+                                        <td>June 10, 2026</td>
+                                        <td>₹7,15,200</td>
+                                        <td>-₹18,000</td>
+                                        <td><strong>₹6,97,200</strong></td>
+                                        <td><span class="badge badge-success">Settled (RTGS)</span></td>
+                                        <td><button class="btn btn-secondary btn-sm" onclick="showInvoiceModal('INV-2026-0743', '₹6,97,200')">View GST PDF</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>INV-2026-0699</strong></td>
+                                        <td>Apr 24, 2026</td>
+                                        <td>May 24, 2026</td>
+                                        <td>₹5,18,000</td>
+                                        <td>₹0</td>
+                                        <td><strong>₹5,18,000</strong></td>
+                                        <td><span class="badge badge-success">Settled (NEFT)</span></td>
+                                        <td><button class="btn btn-secondary btn-sm" onclick="showInvoiceModal('INV-2026-0699', '₹5,18,000')">View GST PDF</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= SALESMAN / DSR SECTION ================= -->
+                
+                <!-- SALESMAN TAB 1: BEAT PLAN & VISITS -->
+                <div id="tab-sales-beat" class="tab-panel">
+                    
+                    <!-- Sales Daily Status Overview -->
+                    <div class="stats-grid">
+                        <div class="stat-card" style="border-top: 3px solid var(--sales-accent);">
+                            <div class="stat-header">
+                                <span class="stat-title">Today's Beat Route</span>
+                                <div class="stat-icon" style="background:var(--sales-light); color:var(--sales-accent);">🗺️</div>
+                            </div>
+                            <div class="stat-value" style="font-size:20px;">Bandra & Khar Retail</div>
+                            <div class="stat-sub">12 Outlets Assigned • 7 Completed</div>
+                        </div>
+
+                        <div class="stat-card" style="border-top: 3px solid var(--sales-accent);">
+                            <div class="stat-header">
+                                <span class="stat-title">Day's Secondary Bookings</span>
+                                <div class="stat-icon" style="background:#d1fae5; color:#047857;">💰</div>
+                            </div>
+                            <div class="stat-value" id="salesDayTotal">₹84,500</div>
+                            <div class="stat-sub">Target for Today: ₹1,00,000</div>
+                        </div>
+
+                        <div class="stat-card" style="border-top: 3px solid var(--sales-accent);">
+                            <div class="stat-header">
+                                <span class="stat-title">Order Strike Rate</span>
+                                <div class="stat-icon" style="background:#e0f2fe; color:#0284c7;">🎯</div>
+                            </div>
+                            <div class="stat-value">85.7%</div>
+                            <div class="stat-sub">6 Orders from 7 Visits</div>
+                        </div>
+
+                        <div class="stat-card" style="border-top: 3px solid var(--sales-accent);">
+                            <div class="stat-header">
+                                <span class="stat-title">Linked Distributor</span>
+                                <div class="stat-icon" style="background:#fef3c7; color:#b45309;">🏢</div>
+                            </div>
+                            <div class="stat-value" style="font-size:18px;">Metro Beverage Depot</div>
+                            <div class="stat-sub">Stock Fulfillment Hub</div>
+                        </div>
+                    </div>
+
+                    <!-- Beat Store List -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <span>📍 Outlets Scheduled for Today's Beat</span>
+                            </div>
+                            <button class="btn btn-sales btn-sm" onclick="switchSalesmanTab('onboard')">+ Add New Retailer</button>
+                        </div>
+
+                        <div id="beatStoreListContainer">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- SALESMAN TAB 2: FIELD ORDER BOOKING -->
+                <div id="tab-sales-book-order" class="tab-panel">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-title">📝 Take Retail Outlet Order</div>
+                            <div style="font-size: 12px; color: var(--text-light);">
+                                Linked Outlet: <strong id="salesCurrentOutletName" style="color:var(--sales-accent);">Nature's Basket - Bandra West</strong>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:12px; margin-bottom: 16px; flex-wrap:wrap;">
+                            <div style="flex:1; min-width:240px;">
+                                <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Select Outlet to Bill</label>
+                                <select class="form-control" id="salesOutletSelector" onchange="selectOutletForOrder(this.value)">
+                                    <option value="Nature's Basket - Bandra West">Nature's Basket - Bandra West</option>
+                                    <option value="Grand Hyatt Executive Lounge">Grand Hyatt Executive Lounge</option>
+                                    <option value="Foodhall Supermarket Linking Rd">Foodhall Supermarket Linking Rd</option>
+                                    <option value="Health First Organic Store">Health First Organic Store</option>
+                                    <option value="The Oberoi Palm Court">The Oberoi Palm Court</option>
+                                </select>
+                            </div>
+                            <div style="flex:1; min-width:200px;">
+                                <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Payment Mode Agreed</label>
+                                <select class="form-control" id="salesPayMode">
+                                    <option>UPI / Instant QR Settlement</option>
+                                    <option>Distributor Credit (7 Days)</option>
+                                    <option>Cash on Delivery (COD)</option>
+                                    <option>Cheque on Delivery</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="catalog-controls">
+                            <div class="filter-buttons">
+                                <button class="filter-btn active sales-active" onclick="filterSalesCatalog('ALL', this)">All Items</button>
+                                <button class="filter-btn" onclick="filterSalesCatalog('AQUA_DIAMOND', this)">Aqua Diamond Alkaline</button>
+                                <button class="filter-btn" onclick="filterSalesCatalog('AQUINNE', this)">Aquinne Sparkling</button>
+                            </div>
+                        </div>
+
+                        <div class="product-grid" id="salesProductGridContainer">
+                            <!-- Product Grid for Sales Field -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SALESMAN TAB 3: TARGETS & PERFORMANCE -->
+                <div id="tab-sales-targets" class="tab-panel">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-title">Monthly Sales Target (MSR)</span>
+                                <div class="stat-icon" style="background:#e0f2fe; color:#0284c7;">🎯</div>
+                            </div>
+                            <div class="stat-value">₹18,00,000</div>
+                            <div class="stat-sub">Month: Current Period</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-title">Month-To-Date Achieved</span>
+                                <div class="stat-icon" style="background:#d1fae5; color:#047857;">📈</div>
+                            </div>
+                            <div class="stat-value">₹14,40,000</div>
+                            <div class="stat-sub">80% Target Achieved (24 Days)</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-title">Incentive Slab Unlocked</span>
+                                <div class="stat-icon" style="background:var(--sales-light); color:var(--sales-accent);">🏆</div>
+                            </div>
+                            <div class="stat-value">₹24,500</div>
+                            <div class="stat-sub">Next Tier Bonus at ₹16,00,000 (+₹10,000)</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-title">New Stores Converted</span>
+                                <div class="stat-icon" style="background:#fef3c7; color:#b45309;">🏬</div>
+                            </div>
+                            <div class="stat-value">18 Outlets</div>
+                            <div class="stat-sub">Target: 20 Outlets / Month</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-title">📊 Category-wise Sales Performance (INR ₹)</div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:16px;">
+                            <div>
+                                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:4px;">
+                                    <span>Aqua Diamond 500ml & 1L Alkaline Water</span>
+                                    <span>₹8,20,000 / ₹10,00,000 (82%)</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width: 82%;"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:4px;">
+                                    <span>Aquinne Natural Sparkling Mineral (330ml / 750ml)</span>
+                                    <span>₹4,60,000 / ₹5,50,000 (83.6%)</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width: 83.6%; background: var(--success);"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:4px;">
+                                    <span>20L Commercial Carboys (Offices & Gyms)</span>
+                                    <span>₹1,60,000 / ₹2,50,000 (64%)</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width: 64%; background: var(--warning);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SALESMAN TAB 4: ONBOARD RETAILER -->
+                <div id="tab-sales-onboard" class="tab-panel">
+                    <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
+                        <div class="panel-header">
+                            <div class="panel-title">🏬 Onboard New Retailer / HORECA Account</div>
+                        </div>
+
+                        <form onsubmit="handleOnboardRetailer(event)">
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                                <div class="form-group">
+                                    <label>Shop / Establishment Name *</label>
+                                    <input type="text" id="onboardShopName" class="form-control" placeholder="e.g. Wellness Gourmet Market" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Outlet Type *</label>
+                                    <select class="form-control" id="onboardType">
+                                        <option>Gourmet Supermarket / Kirana</option>
+                                        <option>Fine Dining / HORECA</option>
+                                        <option>Gym / Fitness Center</option>
+                                        <option>Corporate Office / Tech Park</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                                <div class="form-group">
+                                    <label>Owner / Manager Contact Person *</label>
+                                    <input type="text" id="onboardOwner" class="form-control" placeholder="e.g. Sunil Patil" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Mobile Number (For Billing OTP & WhatsApp) *</label>
+                                    <input type="tel" id="onboardPhone" class="form-control" placeholder="+91 98XXX XXXXX" required>
+                                </div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                                <div class="form-group">
+                                    <label>GSTIN / FSSAI License Number</label>
+                                    <input type="text" id="onboardGstin" class="form-control" placeholder="27AAAAA0000A1Z5">
+                                </div>
+                                <div class="form-group">
+                                    <label>Preferred Delivery Depot</label>
+                                    <select class="form-control">
+                                        <option>Metro Beverage Distributors (Mumbai West)</option>
+                                        <option>South Mumbai Logistics Depot</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Complete Address & Landmark</label>
+                                <textarea class="form-control" rows="2" placeholder="Shop #12, Ground Floor, Linking Road, Mumbai 400052" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Initial Booking Requirement (Cases)</label>
+                                <input type="number" class="form-control" value="10" min="2" max="200">
+                            </div>
+
+                            <button type="submit" class="btn btn-sales" style="width: 100%;">
+                                Submit KYC & Onboard Retailer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- SALESMAN TAB 5: SCHEMES & OFFERS -->
+                <div id="tab-sales-schemes" class="tab-panel">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-title">🎁 Current Field Schemes & Retail Trade Margins</div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                            <div style="border:1px solid #c7d2fe; background:#f5f3ff; border-radius:8px; padding:16px;">
+                                <span class="badge badge-sales" style="margin-bottom:8px;">Super Scheme 10+1</span>
+                                <h3 style="font-size:15px; font-weight:700; margin-bottom:4px; color:var(--text);">Aqua Diamond 500ml</h3>
+                                <p style="font-size:12px; color:var(--text-light); line-height:1.5; margin-bottom:8px;">
+                                    Book 10 Cases for any Supermarket & get 1 Case free of charge. Retail margin increases to 38%.
+                                </p>
+                                <button class="btn btn-sales btn-sm" onclick="applySchemeToCart('AD-500', 10)">Apply to Current Booking</button>
+                            </div>
+
+                            <div style="border:1px solid #bbf7d0; background:#f0fdf4; border-radius:8px; padding:16px;">
+                                <span class="badge badge-success" style="margin-bottom:8px;">HORECA Sparkling Bundle</span>
+                                <h3 style="font-size:15px; font-weight:700; margin-bottom:4px; color:var(--text);">Aquinne 750ml Prestige</h3>
+                                <p style="font-size:12px; color:var(--text-light); line-height:1.5; margin-bottom:8px;">
+                                    Order 5 Cases of Aquinne 750ml Glass and receive 2 Complimentary branded table ice-buckets.
+                                </p>
+                                <button class="btn btn-sm" style="background:#16a34a;" onclick="applySchemeToCart('AQ-750', 5)">Apply to Current Booking</button>
+                            </div>
+
+                            <div style="border:1px solid #fed7aa; background:#fff7ed; border-radius:8px; padding:16px;">
+                                <span class="badge badge-warning" style="margin-bottom:8px;">Corporate 20L Carboy Offer</span>
+                                <h3 style="font-size:15px; font-weight:700; margin-bottom:4px; color:var(--text);">20L Drum Exchange</h3>
+                                <p style="font-size:12px; color:var(--text-light); line-height:1.5; margin-bottom:8px;">
+                                    Zero Deposit on first 5 Carboys for verified Corporate & Gym clients with annual contract.
+                                </p>
+                                <button class="btn btn-secondary btn-sm" onclick="showToast('Corporate waiver applied to next order!')">Activate Waiver</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- 3. SLIDE-OUT CART MODAL / CHECKOUT -->
+        <div id="cartModal" class="cart-modal">
+            <div class="cart-drawer">
+                <div class="cart-drawer-header">
+                    <h3 style="font-size: 16px; font-weight:700;" id="cartModalTitle">Purchase Order Draft (INR ₹)</h3>
+                    <button class="btn btn-secondary btn-sm" onclick="toggleCartModal(false)">✕ Close</button>
+                </div>
+
+                <div class="cart-drawer-body" id="cartItemList">
+                    <!-- Injected via JS -->
+                </div>
+
+                <div class="cart-drawer-footer">
+                    <div class="summary-row">
+                        <span>Gross Subtotal (Base List)</span>
+                        <span id="cartSubtotal">₹0.00</span>
+                    </div>
+                    <div class="summary-row" style="color: var(--success);">
+                        <span id="cartDiscountLabel">Tier Discount (Platinum -12%)</span>
+                        <span id="cartDiscount">-₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>GST & Freight Handling</span>
+                        <span id="cartFreight">Included (18% GST)</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total PO Commitment (INR):</span>
+                        <span id="cartGrandTotal">₹0.00</span>
+                    </div>
+
+                    <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn" id="btnConfirmPO" style="width: 100%;" onclick="submitPurchaseOrder()">
+                            Confirm & Dispatch Purchase Order
+                        </button>
+                        <button class="btn btn-secondary" style="width: 100%;" onclick="clearCart()">
+                            Clear Draft
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. TRACKING & INVOICE DETAIL MODAL (INR) -->
+        <div id="detailModal" class="modal-overlay">
+            <div class="modal-box">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 16px;">
+                    <div>
+                        <h2 id="modalTitle" style="font-size: 18px; font-weight:800;">Consignment Details</h2>
+                        <p id="modalSub" style="font-size: 12px; color: var(--text-light); margin-top: 2px;"></p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="closeDetailModal()">✕</button>
+                </div>
+
+                <div id="modalContent">
+                    <!-- Dynamic Body -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. TOAST NOTIFICATION CONTAINER -->
+        <div class="toast-container" id="toastBox"></div>
+
+    </div>
+
+    <script>
+        /* -------------------------------------------------------------
+           MOCK DATA & STATE MANAGEMENT (PRICES IN INR ₹)
+        --------------------------------------------------------------*/
+        const PRODUCTS = [
+            {
+                id: "AD-500",
+                brand: "AQUA_DIAMOND",
+                brandName: "Aqua Diamond",
+                name: "Alkaline 9.5+ pH - 500ml",
+                caseSpec: "24 bottles / Case",
+                palletSpec: "72 Cases / Pallet",
+                basePrice: 960.00, // INR
+                icon: "💎💧",
+                sku: "AD-ALK-500-C24",
+                stock: 1400
+            },
+            {
+                id: "AD-1000",
+                brand: "AQUA_DIAMOND",
+                brandName: "Aqua Diamond",
+                name: "Alkaline 9.5+ pH - 1.0L Sport Cap",
+                caseSpec: "12 bottles / Case",
+                palletSpec: "60 Cases / Pallet",
+                basePrice: 840.00, // INR
+                icon: "💎🍼",
+                sku: "AD-ALK-1000-C12",
+                stock: 920
+            },
+            {
+                id: "AD-20L",
+                brand: "BULK",
+                brandName: "Aqua Diamond Bulk",
+                name: "20L Commercial Carboy (Exchange)",
+                caseSpec: "1 Carboy Drum",
+                palletSpec: "24 Drums / Pallet",
+                basePrice: 120.00, // INR
+                icon: "🛢️",
+                sku: "AD-BULK-20L",
+                stock: 650
+            },
+            {
+                id: "AQ-330",
+                brand: "AQUINNE",
+                brandName: "Aquinne",
+                name: "Natural Sparkling Mineral - 300ml Glass",
+                caseSpec: "35 Glass Bottles / Case",
+                palletSpec: "64 Cases / Pallet",
+                basePrice: 1680.00, // INR
+                icon: "✨🍾",
+                sku: "AQ-SPK-330G",
+                stock: 1100
+            },
+            {
+                id: "AQ-750",
+                brand: "AQUINNE",
+                brandName: "Aquinne",
+                name: "Reserve Sparkling Mineral - 750ml Prestige",
+                caseSpec: "12 Prestige Bottles / Case",
+                palletSpec: "56 Cases / Pallet",
+                basePrice: 1950.00, // INR
+                icon: "🥂✨",
+                sku: "AQ-SPK-750P",
+                stock: 480
+            },
+            {
+                id: "AQ-FLV",
+                brand: "AQUINNE",
+                brandName: "Aquinne",
+                name: "Sparkling Lemon & Lime Zest - 500ml",
+                caseSpec: "24 Cans / Case",
+                palletSpec: "80 Cases / Pallet",
+                basePrice: 1440.00, // INR
+                icon: "🍋🫧",
+                sku: "AQ-FLV-500C",
+                stock: 750
+            }
+        ];
+
+        let distributorOrders = [
+            {
+                id: "PO-IN-9041",
+                date: "Today, 08:15 AM",
+                items: "Aqua Diamond 500ml (144 cs), Aquinne 330ml (64 cs)",
+                pallets: 3,
+                cases: 208,
+                total: 216345.00,
+                paymentStatus: "Net 30 Pending",
+                status: "In Transit",
+                statusStep: 3,
+                eta: "Today, 4:00 PM",
+                driver: "Ramesh Singh (E-Way: 2819-4820-1940)"
+            },
+            {
+                id: "PO-IN-8832",
+                date: "May 27, 2026",
+                items: "Aqua Diamond 20L Carboys (120 units)",
+                pallets: 5,
+                cases: 120,
+                total: 12672.00,
+                paymentStatus: "Paid via RTGS",
+                status: "Delivered",
+                statusStep: 4,
+                eta: "Delivered May 28",
+                driver: "Depot Truck #MH-04-AB-4011"
+            },
+            {
+                id: "PO-IN-8710",
+                date: "May 18, 2026",
+                items: "Aquinne Reserve 750ml (112 cs)",
+                pallets: 2,
+                cases: 112,
+                total: 192192.00,
+                paymentStatus: "Paid via NEFT",
+                status: "Delivered",
+                statusStep: 4,
+                eta: "Delivered May 19",
+                driver: "Inter-State Freight Carrier #12"
+            }
+        ];
+
+        let beatStores = [
+            { id: 1, name: "Nature's Basket - Bandra West", owner: "Karan Mehta", type: "Supermarket", distance: "0.4 km", status: "Visited", orderTotal: 28500, phone: "+91 98201 11223" },
+            { id: 2, name: "Grand Hyatt Executive Lounge", owner: "Chef Marco", type: "HORECA", distance: "1.2 km", status: "Ordered", orderTotal: 42000, phone: "+91 98330 44556" },
+            { id: 3, name: "Foodhall Supermarket Linking Rd", owner: "Deepak Sethi", type: "Supermarket", distance: "1.8 km", status: "Ordered", orderTotal: 14000, phone: "+91 98199 77889" },
+            { id: 4, name: "Health First Organic Store", owner: "Anita Roy", type: "Gourmet Health", distance: "2.5 km", status: "Pending", orderTotal: 0, phone: "+91 98700 33221" },
+            { id: 5, name: "The Oberoi Palm Court", owner: "Sanjay Singhania", type: "Fine Dine", distance: "3.1 km", status: "Pending", orderTotal: 0, phone: "+91 98210 99887" }
+        ];
+
+        let currentCart = {};
+        let currentRole = "DISTRIBUTOR"; // 'DISTRIBUTOR' | 'SALESMAN'
+
+        let activeDistributor = {
+            id: "AD-METRO-MUM",
+            name: "Metro Beverages Mumbai",
+            tier: "Platinum",
+            discountRate: 0.12,
+            creditLimit: 5000000.00,
+            creditUsed: 1520000.00,
+            carboysOut: 420
+        };
+
+        let activeSalesman = {
+            id: "DSR-RAJ-01",
+            name: "Rajesh Sharma",
+            beat: "Bandra - Khar FMCG Route",
+            target: 1800000,
+            achieved: 1440000,
+            commissionRate: 0.05
+        };
+
+        /* -------------------------------------------------------------
+           AUTHENTICATION & ROLE TOGGLERS
+        --------------------------------------------------------------*/
+        function selectLoginRole(role) {
+            currentRole = role;
+            const distBtn = document.getElementById("btnRoleDistributor");
+            const salesBtn = document.getElementById("btnRoleSalesman");
+            const submitBtn = document.getElementById("submitAuthBtn");
+            const lblUser = document.getElementById("lblUsername");
+            const userInput = document.getElementById("distributorId");
+
+            if (role === 'DISTRIBUTOR') {
+                distBtn.classList.add("active");
+                salesBtn.classList.remove("active", "sales");
+                submitBtn.innerText = "Sign In to Wholesale Portal (₹)";
+                submitBtn.className = "btn";
+                lblUser.innerText = "Distributor GSTIN / Account ID";
+                userInput.value = "AD-METRO-MUM";
+            } else {
+                salesBtn.classList.add("active", "sales");
+                distBtn.classList.remove("active");
+                submitBtn.innerText = "Sign In to Salesman DSR Portal (₹)";
+                submitBtn.className = "btn btn-sales";
+                lblUser.innerText = "Salesman Employee Code / Mobile";
+                userInput.value = "DSR-RAJ-01";
+            }
+        }
+
+        function quickFill(id, name, role) {
+            selectLoginRole(role);
+            document.getElementById("distributorId").value = id;
+            if (role === 'DISTRIBUTOR') {
+                activeDistributor.id = id;
+                activeDistributor.name = name;
+            } else {
+                activeSalesman.id = id;
+                activeSalesman.name = name;
+            }
+            showToast(`Preset loaded for ${name}`);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            document.getElementById("authScreen").style.display = "none";
+            document.getElementById("portalDashboard").style.display = "flex";
+
+            if (currentRole === 'DISTRIBUTOR') {
+                setupDistributorPortal();
+            } else {
+                setupSalesmanPortal();
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById("portalDashboard").style.display = "none";
+            document.getElementById("authScreen").style.display = "flex";
+            showToast("Logged out successfully.");
+        }
+
+        /* -------------------------------------------------------------
+           DISTRIBUTOR PORTAL LOGIC
+        --------------------------------------------------------------*/
+        function setupDistributorPortal() {
+            document.getElementById("mainNavbar").className = "navbar";
+            document.getElementById("brandIcon").className = "brand-badge-icon";
+            document.getElementById("brandIcon").innerText = "💎";
+            document.getElementById("portalHeaderTitle").innerText = "Aqua Diamond & Aquinne";
+            document.getElementById("portalHeaderSub").innerText = "Authorized B2B Wholesale Hub (India)";
+
+            document.getElementById("navDistributorName").innerText = activeDistributor.name;
+            document.getElementById("navTierBadge").innerText = activeDistributor.tier + " (₹)";
+            document.getElementById("navTierBadge").className = "badge badge-info";
+
+            document.getElementById("distributorSubnav").style.display = "flex";
+            document.getElementById("salesmanSubnav").style.display = "none";
+
+            document.getElementById("cartBtnLabel").innerText = "PO Cart";
+            document.getElementById("btnConfirmPO").className = "btn";
+
+            switchDistributorTab('dashboard');
+            renderDistributorDashboard();
+            renderCatalog('ALL');
+            showToast(`Welcome back, ${activeDistributor.name}!`);
+        }
+
+        function switchDistributorTab(tabId) {
+            document.querySelectorAll("#distributorSubnav .subnav-tab").forEach(t => t.classList.remove("active"));
+            document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+
+            const targetTab = Array.from(document.querySelectorAll("#distributorSubnav .subnav-tab")).find(el => el.getAttribute('onclick')?.includes(tabId));
+            if (targetTab) targetTab.classList.add("active");
+
+            const targetPanel = document.getElementById(`tab-dist-${tabId}`);
+            if (targetPanel) targetPanel.classList.add("active");
+
+            if (tabId === 'orders') renderOrdersTable();
+            if (tabId === 'catalog') renderCatalog('ALL');
+        }
+
+        function renderDistributorDashboard() {
+            const liveTbody = document.getElementById("liveOrdersTbody");
+            liveTbody.innerHTML = "";
+
+            distributorOrders.slice(0, 2).forEach(order => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${order.id}</strong></td>
+                    <td style="max-width: 200px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${order.items}</td>
+                    <td>${order.pallets} Pallets</td>
+                    <td><strong>₹${order.total.toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong></td>
+                    <td><span class="badge ${order.status === 'In Transit' ? 'badge-warning' : 'badge-success'}">${order.status}</span></td>
+                    <td><button class="btn btn-secondary btn-sm" onclick="trackOrderModal('${order.id}')">Track</button></td>
+                `;
+                liveTbody.appendChild(tr);
+            });
+
+            const availableCredit = activeDistributor.creditLimit - activeDistributor.creditUsed;
+            document.getElementById("kpiCredit").innerText = `₹${availableCredit.toLocaleString('en-IN')}`;
+            document.getElementById("carboyOutCount").innerText = activeDistributor.carboysOut;
+            document.getElementById("carboyCountKpi").innerText = `${activeDistributor.carboysOut} Units`;
+            document.getElementById("carboyCreditVal").innerText = `₹${(activeDistributor.carboysOut * 150).toLocaleString('en-IN')}`;
+            document.getElementById("carboyDepositKpi").innerText = `Deposit Balance: ₹${(activeDistributor.carboysOut * 150).toLocaleString('en-IN')} (@ ₹150)`;
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById("ordersFullTbody");
+            tbody.innerHTML = "";
+
+            distributorOrders.forEach(order => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${order.id}</strong></td>
+                    <td>${order.date}</td>
+                    <td>${order.items}</td>
+                    <td><strong>${order.cases}</strong></td>
+                    <td><strong>₹${order.total.toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong></td>
+                    <td><span class="badge badge-info">${order.paymentStatus}</span></td>
+                    <td><span class="badge ${order.status === 'In Transit' ? 'badge-warning' : 'badge-success'}">${order.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="trackOrderModal('${order.id}')">Track & Invoice</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* -------------------------------------------------------------
+           SALESMAN PORTAL LOGIC
+        --------------------------------------------------------------*/
+        function setupSalesmanPortal() {
+            document.getElementById("mainNavbar").className = "navbar sales-nav";
+            document.getElementById("brandIcon").className = "brand-badge-icon sales-icon";
+            document.getElementById("brandIcon").innerText = "🛵";
+            document.getElementById("portalHeaderTitle").innerText = "Aqua Diamond & Aquinne - DSR App";
+            document.getElementById("portalHeaderSub").innerText = "Field Sales & Outlet Booking";
+
+            document.getElementById("navDistributorName").innerText = activeSalesman.name;
+            document.getElementById("navTierBadge").innerText = activeSalesman.beat;
+            document.getElementById("navTierBadge").className = "badge badge-sales";
+
+            document.getElementById("distributorSubnav").style.display = "none";
+            document.getElementById("salesmanSubnav").style.display = "flex";
+
+            document.getElementById("cartBtnLabel").innerText = "Store Order";
+            document.getElementById("btnConfirmPO").className = "btn btn-sales";
+
+            switchSalesmanTab('beat');
+            renderBeatStoreList();
+            renderSalesCatalog('ALL');
+            showToast(`Logged in as Field Executive: ${activeSalesman.name}`);
+        }
+
+        function switchSalesmanTab(tabId) {
+            document.querySelectorAll("#salesmanSubnav .subnav-tab").forEach(t => t.classList.remove("active", "sales-active"));
+            document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+
+            const targetTab = Array.from(document.querySelectorAll("#salesmanSubnav .subnav-tab")).find(el => el.getAttribute('onclick')?.includes(tabId));
+            if (targetTab) targetTab.classList.add("active", "sales-active");
+
+            const targetPanel = document.getElementById(`tab-sales-${tabId}`);
+            if (targetPanel) targetPanel.classList.add("active");
+
+            if (tabId === 'beat') renderBeatStoreList();
+            if (tabId === 'book-order') renderSalesCatalog('ALL');
+        }
+
+        function renderBeatStoreList() {
+            const container = document.getElementById("beatStoreListContainer");
+            container.innerHTML = "";
+
+            let totalDayBookings = 0;
+
+            beatStores.forEach(store => {
+                totalDayBookings += store.orderTotal;
+                const statusBadge = store.status === 'Ordered' 
+                    ? `<span class="badge badge-success">Order: ₹${store.orderTotal.toLocaleString('en-IN')}</span>`
+                    : (store.status === 'Visited' ? `<span class="badge badge-warning">Visited (No Order)</span>` : `<span class="badge badge-info">Pending Visit</span>`);
+
+                const card = document.createElement("div");
+                card.className = "beat-store-card";
+                card.innerHTML = `
+                    <div class="store-info">
+                        <h4>🏬 ${store.name} ${statusBadge}</h4>
+                        <div class="store-meta">
+                            Contact: <strong>${store.owner}</strong> (${store.phone}) • ${store.type} • Approx ${store.distance}
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button class="btn btn-secondary btn-sm" onclick="checkInStore('${store.name}')">📍 Check-In</button>
+                        <button class="btn btn-sales btn-sm" onclick="startOrderForStore('${store.name}')">📝 Book Order</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById("salesDayTotal").innerText = `₹${totalDayBookings.toLocaleString('en-IN')}`;
+        }
+
+        function checkInStore(storeName) {
+            showToast(`GPS Geofence Verified: Checked-in at ${storeName}`);
+        }
+
+        function startOrderForStore(storeName) {
+            document.getElementById("salesCurrentOutletName").innerText = storeName;
+            document.getElementById("salesOutletSelector").value = storeName;
+            switchSalesmanTab('book-order');
+            showToast(`Booking order for ${storeName}`);
+        }
+
+        function selectOutletForOrder(storeName) {
+            document.getElementById("salesCurrentOutletName").innerText = storeName;
+            showToast(`Outlet changed to: ${storeName}`);
+        }
+
+        /* -------------------------------------------------------------
+           CATALOG & CART FUNCTIONALITY (INR)
+        --------------------------------------------------------------*/
+        function filterCatalog(category, btnElement) {
+            if (btnElement) {
+                document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+                btnElement.classList.add("active");
+            }
+            renderCatalog(category);
+        }
+
+        function filterSalesCatalog(category, btnElement) {
+            if (btnElement) {
+                document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active", "sales-active"));
+                btnElement.classList.add("active", "sales-active");
+            }
+            renderSalesCatalog(category);
+        }
+
+        function renderCatalog(filter) {
+            const container = document.getElementById("productGridContainer");
+            container.innerHTML = "";
+
+            const filtered = PRODUCTS.filter(p => filter === 'ALL' || p.brand === filter);
+
+            filtered.forEach(p => {
+                const discountedPrice = (p.basePrice * (1 - activeDistributor.discountRate)).toFixed(2);
+                const currentQty = currentCart[p.id] || 0;
+
+                const card = document.createElement("div");
+                card.className = "product-card";
+                card.innerHTML = `
+                    <div class="product-badge-line">
+                        <span class="brand-tag ${p.brand === 'AQUA_DIAMOND' ? 'aqua-diamond' : 'aquinne'}">${p.brandName}</span>
+                        <span style="font-size: 11px; color: var(--text-muted);">SKU: ${p.sku}</span>
+                    </div>
+
+                    <div class="product-visual">
+                        <span class="bottle-icon">${p.icon}</span>
+                    </div>
+
+                    <div class="product-title">${p.name}</div>
+                    <div class="product-meta">${p.caseSpec} • ${p.palletSpec}</div>
+
+                    <div class="price-row">
+                        <div>
+                            <span class="wholesale-price">₹${parseFloat(discountedPrice).toLocaleString('en-IN')}</span>
+                            <span class="unit-pack">/case</span>
+                            <div style="font-size: 10px; color: var(--text-muted); text-decoration: line-through;">MRP/List: ₹${p.basePrice.toLocaleString('en-IN')}</div>
+                        </div>
+                        <span class="badge badge-success" style="font-size: 10px;">In Stock (${p.stock})</span>
+                    </div>
+
+                    <div class="qty-controls" style="margin-top: 10px;">
+                        <button class="qty-btn" onclick="updateItemQty('${p.id}', -1)">-</button>
+                        <input type="number" class="qty-input" id="input-${p.id}" value="${currentQty}" min="0" onchange="setItemQty('${p.id}', this.value)">
+                        <button class="qty-btn" onclick="updateItemQty('${p.id}', 1)">+</button>
+                        <button class="btn btn-sm" style="flex:1; margin-left:4px;" onclick="addQuickPallet('${p.id}')">
+                            +1 Pallet
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderSalesCatalog(filter) {
+            const container = document.getElementById("salesProductGridContainer");
+            if (!container) return;
+            container.innerHTML = "";
+
+            const filtered = PRODUCTS.filter(p => filter === 'ALL' || p.brand === filter);
+
+            filtered.forEach(p => {
+                const currentQty = currentCart[p.id] || 0;
+                const card = document.createElement("div");
+                card.className = "product-card";
+                card.innerHTML = `
+                    <div class="product-badge-line">
+                        <span class="brand-tag ${p.brand === 'AQUA_DIAMOND' ? 'aqua-diamond' : 'aquinne'}">${p.brandName}</span>
+                        <span class="badge badge-success" style="font-size:9px;">Retailer Margin: 35%</span>
+                    </div>
+
+                    <div class="product-visual">
+                        <span class="bottle-icon">${p.icon}</span>
+                    </div>
+
+                    <div class="product-title">${p.name}</div>
+                    <div class="product-meta">${p.caseSpec}</div>
+
+                    <div class="price-row">
+                        <div>
+                            <span class="wholesale-price" style="color:var(--sales-accent);">₹${p.basePrice.toLocaleString('en-IN')}</span>
+                            <span class="unit-pack">/case billed</span>
+                        </div>
+                    </div>
+
+                    <div class="qty-controls" style="margin-top: 10px;">
+                        <button class="qty-btn" onclick="updateItemQty('${p.id}', -1)">-</button>
+                        <input type="number" class="qty-input" id="input-${p.id}" value="${currentQty}" min="0" onchange="setItemQty('${p.id}', this.value)">
+                        <button class="qty-btn" onclick="updateItemQty('${p.id}', 1)">+</button>
+                        <button class="btn btn-sales btn-sm" style="flex:1; margin-left:4px;" onclick="updateItemQty('${p.id}', 5)">
+                            +5 Cases
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateItemQty(prodId, delta) {
+            const current = currentCart[prodId] || 0;
+            const updated = Math.max(0, current + delta);
+            setItemQty(prodId, updated);
+        }
+
+        function setItemQty(prodId, val) {
+            const num = parseInt(val) || 0;
+            if (num > 0) {
+                currentCart[prodId] = num;
+            } else {
+                delete currentCart[prodId];
+            }
+            const input = document.getElementById(`input-${prodId}`);
+            if (input) input.value = num;
+            updateCartSummary();
+        }
+
+        function addQuickPallet(prodId) {
+            const product = PRODUCTS.find(p => p.id === prodId);
+            if (!product) return;
+            const count = parseInt(product.palletSpec) || 50;
+            updateItemQty(prodId, count);
+            showToast(`Added 1 Full Pallet (${count} cases) of ${product.name}`);
+        }
+
+        function applySchemeToCart(prodId, cases) {
+            setItemQty(prodId, cases);
+            toggleCartModal(true);
+            showToast(`Scheme applied: ${cases} cases added!`);
+        }
+
+        function updateCartSummary() {
+            let totalCount = 0;
+            let subtotal = 0;
+            let discountedTotal = 0;
+
+            const listContainer = document.getElementById("cartItemList");
+            listContainer.innerHTML = "";
+
+            const itemIds = Object.keys(currentCart);
+
+            if (itemIds.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); padding: 40px 20px;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🛒</div>
+                        <p style="font-size: 14px;">No products in PO draft yet.</p>
+                        <small>Add products from the catalog to build your order.</small>
+                    </div>
+                `;
+            } else {
+                itemIds.forEach(id => {
+                    const qty = currentCart[id];
+                    const product = PRODUCTS.find(p => p.id === id);
+                    if (!product) return;
+
+                    totalCount += qty;
+                    const lineBase = product.basePrice * qty;
+                    const discRate = (currentRole === 'DISTRIBUTOR') ? activeDistributor.discountRate : 0.05;
+                    const lineNet = lineBase * (1 - discRate);
+                    subtotal += lineBase;
+                    discountedTotal += lineNet;
+
+                    const itemDiv = document.createElement("div");
+                    itemDiv.className = "cart-item";
+                    itemDiv.innerHTML = `
+                        <div class="cart-item-info">
+                            <div class="cart-item-title">${product.name}</div>
+                            <div class="cart-item-meta">${qty} cases × ₹${(product.basePrice * (1 - discRate)).toFixed(2)}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 700; font-size: 13px;">₹${lineNet.toLocaleString('en-IN', {minimumFractionDigits: 2})}</div>
+                            <button style="border:none; background:none; color:var(--danger); font-size:11px; cursor:pointer;" onclick="setItemQty('${id}', 0)">Remove</button>
+                        </div>
+                    `;
+                    listContainer.appendChild(itemDiv);
+                });
+            }
+
+            document.getElementById("navCartCount").innerText = totalCount;
+            document.getElementById("cartSubtotal").innerText = `₹${subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            document.getElementById("cartDiscount").innerText = `-₹${(subtotal - discountedTotal).toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            document.getElementById("cartGrandTotal").innerText = `₹${discountedTotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        }
+
+        function toggleCartModal(open) {
+            const modal = document.getElementById("cartModal");
+            if (open) {
+                updateCartSummary();
+                modal.classList.add("open");
+            } else {
+                modal.classList.remove("open");
+            }
+        }
+
+        function clearCart() {
+            currentCart = {};
+            updateCartSummary();
+            if (currentRole === 'DISTRIBUTOR') renderCatalog('ALL');
+            else renderSalesCatalog('ALL');
+            showToast("Draft cleared.");
+        }
+
+        function submitPurchaseOrder() {
+            const itemIds = Object.keys(currentCart);
+            if (itemIds.length === 0) {
+                showToast("Order draft is empty!");
+                return;
+            }
+
+            let totalCases = 0;
+            let grandTotal = 0;
+            let summaryNames = [];
+            const discRate = (currentRole === 'DISTRIBUTOR') ? activeDistributor.discountRate : 0.05;
+
+            itemIds.forEach(id => {
+                const qty = currentCart[id];
+                const product = PRODUCTS.find(p => p.id === id);
+                totalCases += qty;
+                grandTotal += (product.basePrice * (1 - discRate)) * qty;
+                summaryNames.push(`${product.name} (${qty} cs)`);
+            });
+
+            if (currentRole === 'DISTRIBUTOR') {
+                const newPoId = "PO-IN-" + Math.floor(1000 + Math.random() * 9000);
+                const newOrder = {
+                    id: newPoId,
+                    date: "Just now",
+                    items: summaryNames.join(", "),
+                    pallets: Math.ceil(totalCases / 60),
+                    cases: totalCases,
+                    total: grandTotal,
+                    paymentStatus: "GST Invoice Incurred",
+                    status: "Processing",
+                    statusStep: 1,
+                    eta: "Scheduled 48h Dispatch",
+                    driver: "Carrier Assigned upon Palletization"
+                };
+
+                distributorOrders.unshift(newOrder);
+                activeDistributor.creditUsed += grandTotal;
+
+                currentCart = {};
+                toggleCartModal(false);
+                renderDistributorDashboard();
+                renderOrdersTable();
+                renderCatalog('ALL');
+
+                showToast(`Primary PO ${newPoId} confirmed!`);
+                trackOrderModal(newPoId);
+            } else {
+                // Salesman booking for outlet
+                const outlet = document.getElementById("salesCurrentOutletName").innerText;
+                const payMode = document.getElementById("salesPayMode").value;
+
+                // Mark store in beat
+                const foundStore = beatStores.find(s => s.name === outlet);
+                if (foundStore) {
+                    foundStore.status = "Ordered";
+                    foundStore.orderTotal = grandTotal;
+                }
+
+                currentCart = {};
+                toggleCartModal(false);
+                renderBeatStoreList();
+                renderSalesCatalog('ALL');
+
+                showToast(`Secondary order of ₹${grandTotal.toLocaleString('en-IN')} placed for ${outlet} via ${payMode}!`, true);
+                switchSalesmanTab('beat');
+            }
+        }
+
+        /* -------------------------------------------------------------
+           MODAL & TRACKING VIEWS (INR)
+        --------------------------------------------------------------*/
+        function trackOrderModal(orderId) {
+            const order = distributorOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            document.getElementById("modalTitle").innerText = `Consignment Logistics: ${order.id}`;
+            document.getElementById("modalSub").innerText = `Placed: ${order.date} • Net Amount: ₹${order.total.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+
+            const s1 = order.statusStep >= 1 ? 'done' : '';
+            const s2 = order.statusStep >= 2 ? 'done' : (order.statusStep === 1 ? 'active' : '');
+            const s3 = order.statusStep >= 3 ? 'done' : (order.statusStep === 2 ? 'active' : '');
+            const s4 = order.statusStep >= 4 ? 'done' : (order.statusStep === 3 ? 'active' : '');
+
+            document.getElementById("modalContent").innerHTML = `
+                <div class="track-stepper">
+                    <div class="track-step ${s1 || 'active'}">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">PO Approved</div>
+                    </div>
+                    <div class="track-step ${s2}">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Depot Staging</div>
+                    </div>
+                    <div class="track-step ${s3}">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">In Transit</div>
+                    </div>
+                    <div class="track-step ${s4}">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">Delivered</div>
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; border-radius: 8px; padding: 14px; margin-bottom: 16px; border: 1px solid var(--border);">
+                    <div style="font-size: 13px; font-weight:700; margin-bottom: 4px;">Cargo Manifest & Consignee</div>
+                    <div style="font-size: 12px; color: var(--text-light); line-height: 1.6;">
+                        <strong>Consignee:</strong> ${activeDistributor.name} (${activeDistributor.id})<br>
+                        <strong>Payload:</strong> ${order.items}<br>
+                        <strong>Volume / Pallets:</strong> ${order.cases} Cases (${order.pallets} Pallets)<br>
+                        <strong>Carrier Dispatch:</strong> ${order.driver} • ETA: ${order.eta}
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content: flex-end; gap: 8px;">
+                    <button class="btn btn-secondary btn-sm" onclick="showInvoiceModal('${order.id}', '₹${order.total.toLocaleString('en-IN')}')">View GST Tax Invoice</button>
+                    <button class="btn btn-sm" onclick="closeDetailModal()">Done</button>
+                </div>
+            `;
+
+            document.getElementById("detailModal").classList.add("open");
+        }
+
+        function showInvoiceModal(invRef, totalStr) {
+            document.getElementById("modalTitle").innerText = `GST Tax Invoice: ${invRef}`;
+            document.getElementById("modalSub").innerText = `Issued to: ${activeDistributor.name} • Terms: Net 30`;
+
+            document.getElementById("modalContent").innerHTML = `
+                <div style="border: 1px dashed var(--border); padding: 16px; border-radius: 8px; background:#fff; font-size: 12px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 12px;">
+                        <div>
+                            <strong>AQUA DIAMOND & AQUINNE BOTTLING INDIA PVT LTD</strong><br>
+                            Plot 42, MIDC Industrial Area, Maharashtra<br>
+                            GSTIN: 27AABCA9921D1Z8 • FSSAI: 10020022001944
+                        </div>
+                        <div style="text-align: right;">
+                            <strong>ORIGINAL FOR RECIPIENT</strong><br>
+                            Date: May 2026<br>
+                            State Code: 27 (Maharashtra)
+                        </div>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
+                    <p style="margin-bottom: 6px;">Certified 9.5+ pH Natural Volcanic Alkaline & Sparkling Mineral batch test report attached.</p>
+                    <div style="margin-top: 12px; font-weight:700; text-align:right; font-size: 14px; color:var(--primary-dark);">
+                        Total Billed Amount: ${totalStr || '₹3,30,000'} (Incl. 18% CGST + SGST)
+                    </div>
+                </div>
+                <div style="margin-top: 16px; display:flex; justify-content:flex-end; gap:8px;">
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('GST Tax Invoice PDF saved to downloads.')">🖨️ Print / Download PDF</button>
+                    <button class="btn btn-sm" onclick="closeDetailModal()">Close</button>
+                </div>
+            `;
+
+            document.getElementById("detailModal").classList.add("open");
+        }
+
+        function closeDetailModal() {
+            document.getElementById("detailModal").classList.remove("open");
+        }
+
+        /* -------------------------------------------------------------
+           RETAILER ONBOARDING & CARBOY RETURN
+        --------------------------------------------------------------*/
+        function handleOnboardRetailer(e) {
+            e.preventDefault();
+            const shop = document.getElementById("onboardShopName").value;
+            const owner = document.getElementById("onboardOwner").value;
+            const phone = document.getElementById("onboardPhone").value;
+            const type = document.getElementById("onboardType").value;
+
+            const newStore = {
+                id: beatStores.length + 1,
+                name: shop,
+                owner: owner,
+                type: type,
+                distance: "0.1 km (New)",
+                status: "Pending",
+                orderTotal: 0,
+                phone: phone
+            };
+
+            beatStores.unshift(newStore);
+            renderBeatStoreList();
+            showToast(`Retailer ${shop} onboarded! KYC submitted to distributor.`);
+            switchSalesmanTab('beat');
+        }
+
+        function handleCarboyReturn(e) {
+            e.preventDefault();
+            const qty = parseInt(document.getElementById("pickupQty").value) || 0;
+            const slot = document.getElementById("pickupSlot").value;
+
+            activeDistributor.carboysOut = Math.max(0, activeDistributor.carboysOut - qty);
+            renderDistributorDashboard();
+
+            showToast(`Scheduled backhaul pickup of ${qty} carboys for ${slot}. Deposit of ₹${qty * 150} will credit to your ledger upon dock verification.`);
+            switchDistributorTab('dashboard');
+        }
+
+        function downloadPriceList() {
+            showToast("Generating 2026 Aqua Diamond & Aquinne Wholesale Price List (INR ₹)...");
+            setTimeout(() => {
+                showToast("Price list PDF downloaded successfully.");
+            }, 1000);
+        }
+
+        function showToast(message, isSales = false) {
+            const container = document.getElementById("toastBox");
+            const toast = document.createElement("div");
+            toast.className = `toast ${isSales ? 'sales-toast' : ''}`;
+            toast.innerHTML = `
+                <svg width="18" height="18" fill="none" stroke="${isSales ? '#a78bfa' : '#38bdf8'}" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3400);
+        }
+    </script>
+</body>
+</html>
+
+</html>
